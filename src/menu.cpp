@@ -58,7 +58,7 @@ extern std::string stripPathAndExtension(const std::string &path);
 void Menu::WriteGameOptions()
 {
 #ifdef __SWITCH__
-	FILE * fp = OpenFile("/switch/SuperMarioWar/options.bin", "wb");
+	FILE * fp = OpenFile("./options.bin", "wb");
 #else
 	FILE * fp = OpenFile("ux0:data/smw/options.bin", "wb");
 #endif

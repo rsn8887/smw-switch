@@ -98,7 +98,7 @@ const string convertPath(const string& source)
     s = "ux0:/data/smw/" + source;
 	return s;
 #elif defined(__SWITCH__)
-    s = "/switch/SuperMarioWar/" + source;
+    s = "./" + source;
 	return s;
 #else
     static bool are_paths_initialized = false;

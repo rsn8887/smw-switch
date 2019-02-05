@@ -1640,7 +1640,7 @@ int main(int argc, char *argv[])
 	
 	//Read saved settings from disk
 #ifdef __SWITCH__
-	FILE * fp = OpenFile("/switch/SuperMarioWar/options.bin", "rb");
+	FILE * fp = OpenFile("./options.bin", "rb");
 #else
 	FILE * fp = OpenFile("ux0:data/smw/options.bin", "rb");
 #endif
