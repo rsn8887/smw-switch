@@ -367,10 +367,12 @@ MovingPlatform::MovingPlatform(TilesetTile ** tiledata, MapTile ** tiletypes, sh
 	for(short iSurface = 0; iSurface < 2; iSurface++)
 	{
 		sSurface[iSurface] = SDL_CreateRGBSurface(screen->flags, w * iTileSize, h * iTileSize, screen->format->BitsPerPixel, 0, 0, 0, 0);
-	
+#ifdef USE_SDL2
+		SDL_SetColorKey(sSurface[iSurface], SDL_TRUE, SDL_MapRGB(sSurface[iSurface]->format, 255, 0, 255));
+#else
 		if( SDL_SetColorKey(sSurface[iSurface], SDL_SRCCOLORKEY, SDL_MapRGB(sSurface[iSurface]->format, 255, 0, 255)) < 0)
 			printf("\n ERROR: Couldn't set ColorKey for moving platform: %s\n", SDL_GetError());
-
+#endif
 		SDL_FillRect(sSurface[iSurface], NULL, SDL_MapRGB(sSurface[iSurface]->format, 255, 0, 255));
 	}
 

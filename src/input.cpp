@@ -1,6 +1,15 @@
 #include "global.h"
 #include "input.h"
+#ifdef __vita__
 #include <vitasdk.h>
+#endif
+
+#ifdef __SWITCH__
+int singleJoyconMode = 0;
+static int rTriggerHeld = 0;
+static int lTriggerHeld = 0;
+static int canChangeJoyconMode = 1;
+#endif
 
 CPlayerInput::CPlayerInput()
 {
@@ -79,7 +88,7 @@ void CPlayerInput::Update(SDL_Event event, short iGameState)
 		COutputControl * outputControl;
 		short iPlayerID = iPlayer;
 		short iDeviceID = DEVICE_KEYBOARD;
-		
+#ifdef __vita__
 		SceCtrlData pad;
 		SceCtrlPortInfo info;
 		sceCtrlGetControllerPortInfo(&info);
@@ -119,10 +128,64 @@ void CPlayerInput::Update(SDL_Event event, short iGameState)
 			setState(pad.buttons & SCE_CTRL_START, outputControl, 10);
 			setState(pad.buttons & SCE_CTRL_SELECT, outputControl, 11);
 		}
+#elif defined(__SWITCH__)
+		outputControl = &outputControls[iPlayer];
+		iDeviceID = inputControls[iPlayer]->iDevice;
+		
+		//Ignore input for cpu controlled players
+		if(iGameState == 0 && game_values.playercontrol[iPlayer] != 1)
+			continue;
 
+		if (iPlayer == 0) iPlayer = CONTROLLER_P1_AUTO;
+		uint64_t keysHeld = hidKeysHeld(iPlayer);
+		JoystickPosition l_pos;
+		hidJoystickRead(&l_pos, iPlayer, JOYSTICK_LEFT);
+		int lx = l_pos.dx / 256;
+		int ly = l_pos.dy / 256;
+
+		if (iGameState == 0) { // Game
+			setState((keysHeld & KEY_DLEFT) || (lx < 80), outputControl, 0);
+			setState((keysHeld & KEY_DRIGHT) || (lx > 180), outputControl, 1);
+			setState((keysHeld & KEY_DUP) || (ly < 80) || (keysHeld & KEY_B), outputControl, 2);
+			setState((keysHeld & KEY_DDOWN) || (ly > 180), outputControl, 3);
+			setState(keysHeld & KEY_Y, outputControl, 4);
+			setState(keysHeld & KEY_MINUS, outputControl, 6);
+			setState(keysHeld & KEY_PLUS, outputControl, 7);
+			setState(keysHeld & KEY_L, outputControl, 8);
+			setState(keysHeld & KEY_R, outputControl, 9);
+			setState(keysHeld & KEY_X, outputControl, 10);
+			setState(keysHeld & KEY_A, outputControl, 5);
+		} else {
+			setState((keysHeld & KEY_DUP) || (ly < 80), outputControl, 0);
+			setState((keysHeld & KEY_DDOWN) || (ly > 180), outputControl, 1);
+			setState((keysHeld & KEY_DLEFT) || (lx < 80), outputControl, 2);
+			setState((keysHeld & KEY_DRIGHT) || (lx > 180), outputControl, 3);
+			setState(keysHeld & KEY_B, outputControl, 4);
+			setState(keysHeld & KEY_A, outputControl, 5);
+			setState(keysHeld & KEY_Y, outputControl, 6);
+			setState(keysHeld & KEY_X, outputControl, 7);
+			setState(keysHeld & KEY_L, outputControl, 8);
+			setState(keysHeld & KEY_R, outputControl, 9);
+			setState(keysHeld & KEY_PLUS, outputControl, 10);
+			setState(keysHeld & KEY_MINUS, outputControl, 11);
+		}
+		
+		// Use L+R to switch between single and dual joycon mode
+		if (iPlayer == 0) {
+			lTriggerHeld = keysHeld & KEY_L;
+			rTriggerHeld = keysHeld & KEY_R;
+
+			if (!rTriggerHeld || !lTriggerHeld) {
+				canChangeJoyconMode = 1;
+			}
+			if (rTriggerHeld && lTriggerHeld && canChangeJoyconMode) {
+				singleJoyconMode = !singleJoyconMode;
+				canChangeJoyconMode = 0;
+			}
+		}
+#endif
 		//This line might be causing input from some players not to be read
 		//if(fFound)
 			//break;
 	}
 }
-

@@ -9,7 +9,7 @@
 #define _stricmp(x,y) strcasecmp(x,y)
 #endif
 
-#ifdef __vita__
+#if defined(__vita__) || defined(__SWITCH__)
 #define _strlwr(x) strlwr(x)
 #define _strdup(x) strdup(x)
 #define _stricmp(x,y) strcasecmp(x,y)

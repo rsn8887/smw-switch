@@ -1589,6 +1589,9 @@ short number_key_map[10] = {41, 33, 64, 35, 36, 37, 94, 38, 42, 40};
 
 MenuCodeEnum MI_TextField::SendInput(CPlayerInput * playerInput)
 {
+#ifdef __SWITCH__
+	return MENU_CODE_NONE;
+#else
 	Uint8 * keystate = SDL_GetKeyState(NULL);
 
 	for(int iPlayer = 0; iPlayer < 4; iPlayer++)
@@ -1740,6 +1743,7 @@ MenuCodeEnum MI_TextField::SendInput(CPlayerInput * playerInput)
 	}
 
 	return MENU_CODE_NONE;
+#endif
 }
 
 

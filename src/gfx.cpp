@@ -273,11 +273,16 @@ SDL_Surface * gfx_createskinsurface(SDL_Surface * skin, short spriteindex, Uint8
 	SDL_UnlockSurface(skin);
 	SDL_UnlockSurface(temp);
 
+#ifdef USE_SDL2
+	SDL_SetColorKey(temp, SDL_TRUE, SDL_MapRGB(temp->format, r, g, b));
+	SDL_SetSurfaceRLE(temp, SDL_TRUE);
+#else
 	if( SDL_SetColorKey(temp, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(temp->format, r, g, b)) < 0)
 	{
 		printf("\n ERROR: Couldn't set ColorKey + RLE for new skin surface: %s\n", SDL_GetError());
 		return NULL;
 	}
+#endif
 
 	SDL_Surface * final = SDL_DisplayFormat(temp);
 	if(!final)
@@ -500,12 +505,16 @@ SDL_Surface * gfx_createteamcoloredsurface(SDL_Surface * sImage, short iColor, U
 
 	SDL_UnlockSurface(sImage);
 	SDL_UnlockSurface(sTempImage);
-
+#ifdef USE_SDL2
+	SDL_SetColorKey(sTempImage, SDL_TRUE, SDL_MapRGB(sTempImage->format, r, g, b));
+	SDL_SetSurfaceRLE(sTempImage, SDL_TRUE);
+#else
 	if( SDL_SetColorKey(sTempImage, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(sTempImage->format, r, g, b)) < 0)
 	{
 		printf("\n ERROR: Couldn't set ColorKey + RLE for new team colored surface: %s\n", SDL_GetError());
 		return NULL;
 	}
+#endif
 
 	if(a < 255)
 	{
@@ -854,12 +863,20 @@ bool gfxSprite::init(const std::string& filename, Uint8 r, Uint8 g, Uint8 b, boo
         return false;
     }
 
+#ifdef USE_SDL2
+	SDL_SetColorKey(m_picture, SDL_TRUE, SDL_MapRGB(m_picture->format, r, g, b));
+	if (fUseAccel)
+		SDL_SetSurfaceRLE(m_picture, SDL_TRUE);
+	else
+		SDL_SetSurfaceRLE(m_picture, SDL_FALSE);
+#else
 	if( SDL_SetColorKey(m_picture, SDL_SRCCOLORKEY | (fUseAccel ? SDL_RLEACCEL : 0), SDL_MapRGB(m_picture->format, r, g, b)) < 0)
 	{
         cout << endl << " ERROR: Couldn't set ColorKey + RLE for "
              << filename << ": " << SDL_GetError() << endl;
 		return false;
 	}
+#endif
 
 	SDL_Surface *temp = SDL_DisplayFormat(m_picture);
 	if(!temp)
@@ -900,12 +917,21 @@ bool gfxSprite::init(const std::string& filename, Uint8 r, Uint8 g, Uint8 b, Uin
         return false;
     }
 
+
+#ifdef USE_SDL2
+	SDL_SetColorKey(m_picture, SDL_TRUE, SDL_MapRGB(m_picture->format, r, g, b));
+	if (fUseAccel)
+		SDL_SetSurfaceRLE(m_picture, SDL_TRUE);
+	else
+		SDL_SetSurfaceRLE(m_picture, SDL_FALSE);
+#else
 	if( SDL_SetColorKey(m_picture, SDL_SRCCOLORKEY | (fUseAccel ? SDL_RLEACCEL : 0), SDL_MapRGB(m_picture->format, r, g, b)) < 0)
 	{
         cout << endl << " ERROR: Couldn't set ColorKey + RLE for "
              << filename << ": " << SDL_GetError() << endl;
 		return false;
 	}
+#endif
 
 	if( (SDL_SetAlpha(m_picture, SDL_SRCALPHA | (fUseAccel ? SDL_RLEACCEL : 0), a)) < 0)
 	{
@@ -913,7 +939,7 @@ bool gfxSprite::init(const std::string& filename, Uint8 r, Uint8 g, Uint8 b, Uin
              << filename << ": " << SDL_GetError() << endl;
 		return false;
 	}
-	
+
 	SDL_Surface *temp = SDL_DisplayFormatAlpha(m_picture);
 	if(!temp)
 	{

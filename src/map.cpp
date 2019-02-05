@@ -2747,7 +2747,11 @@ void CMap::preDrawPreviewBlocks(SDL_Surface * targetSurface, bool fThumbnail)
 	if(!fThumbnail)
 	{
 		SDL_FillRect(targetSurface, NULL, SDL_MapRGB(targetSurface->format, 255, 0, 255));
+#ifdef USE_SDL2
+		SDL_SetColorKey(targetSurface, SDL_TRUE, SDL_MapRGB(targetSurface->format, 255, 0, 255));
+#else
 		SDL_SetColorKey(targetSurface, SDL_SRCCOLORKEY, SDL_MapRGB(targetSurface->format, 255, 0, 255));
+#endif
 		SDL_Delay(10);
 	}
 
@@ -2760,7 +2764,11 @@ void CMap::preDrawPreviewForeground(SDL_Surface * targetSurface, bool fThumbnail
 	if(!fThumbnail)
 	{
 		SDL_FillRect(targetSurface, NULL, SDL_MapRGB(targetSurface->format, 255, 0, 255));
+#ifdef USE_SDL2
+		SDL_SetColorKey(targetSurface, SDL_TRUE, SDL_MapRGB(targetSurface->format, 255, 0, 255));
+#else
 		SDL_SetColorKey(targetSurface, SDL_SRCCOLORKEY, SDL_MapRGB(targetSurface->format, 255, 0, 255));
+#endif
 		SDL_Delay(10);
 	}
 
@@ -2927,8 +2935,11 @@ void CMap::predrawbackground(gfxSprite &background, gfxSprite &mapspr)
 void CMap::predrawforeground(gfxSprite &foregroundspr)
 {
 	SDL_FillRect(foregroundspr.getSurface(), NULL, SDL_MapRGB(foregroundspr.getSurface()->format, 255, 0, 255));
+#ifdef USE_SDL2
+	SDL_SetColorKey(foregroundspr.getSurface(), SDL_TRUE, SDL_MapRGB(foregroundspr.getSurface()->format, 255, 0, 255));
+#else
 	SDL_SetColorKey(foregroundspr.getSurface(), SDL_SRCCOLORKEY, SDL_MapRGB(foregroundspr.getSurface()->format, 255, 0, 255));
-
+#endif
 	draw(foregroundspr.getSurface(), 2);
 	draw(foregroundspr.getSurface(), 3);
 }

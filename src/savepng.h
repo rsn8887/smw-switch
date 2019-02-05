@@ -17,9 +17,11 @@
 extern "C" {
 #endif
 
+#ifndef USE_SDL2
 int IMG_SavePNG_RW(SDL_Surface *face, SDL_RWops *src);	
 int IMG_SavePNG(SDL_Surface *surface, const char *file);
-	
+#endif
+
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
 };

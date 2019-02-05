@@ -1,0 +1,78 @@
+TARGET			:= SuperMarioWar
+SOURCES			:= src
+INCLUDES		:= src
+VERSION_MAJOR	:= 1
+VERSION_MINOR	:= 00
+
+LIBS	:= \
+		-specs=$(DEVKITPRO)/libnx/switch.specs \
+		-L$(DEVKITPRO)/libnx/lib \
+		-L$(DEVKITPRO)/portlibs/switch/lib \
+		-lSDL2_net \
+		-lSDL2_mixer \
+		-lSDL2_image \
+		-lSDL2 \
+		-lEGL \
+		-lGLESv2 \
+		-lglapi \
+		-ldrm_nouveau \
+		-lpng \
+		-lz \
+		-ljpeg \
+		-lFLAC \
+		-lvorbisidec \
+		-logg \
+		-lmpg123 \
+		-lc \
+		-lmodplug \
+		-lm \
+		-lnx
+
+CFILES   := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c))
+CPPFILES := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.cpp))
+OBJS     := $(CFILES:.c=.o) $(CPPFILES:.cpp=.o) 
+
+
+export INCLUDE	:= $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir))
+
+
+PREFIX  = $(DEVKITPRO)/devkitA64/bin/aarch64-none-elf
+CC      = $(PREFIX)-gcc
+CXX      = $(PREFIX)-g++
+CFLAGS  = $(INCLUDE) -g -Wl,-q -O2 -w -D__SWITCH__ -DUSE_SDL2 -Wall -Wno-unused-variable \
+        -ffunction-sections \
+        -ffast-math -march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE \
+		-fno-rtti -fno-exceptions
+
+# includes ...
+CFLAGS += -I$(SOURCES)
+CFLAGS += -I$(DEVKITPRO)/portlibs/switch/include/SDL2 \
+			-I$(DEVKITPRO)/portlibs/switch/include \
+			-I$(DEVKITPRO)/libnx/include
+
+export INCLUDE	:= $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir))
+
+CXXFLAGS  = $(CFLAGS) -fno-exceptions -std=gnu++11 -fpermissive
+ASFLAGS = $(CFLAGS)
+
+all: $(TARGET)_switch.zip
+
+$(TARGET)_switch.zip: $(TARGET).nro
+	rm -rf ./release/$(TARGET)
+	rm -rf $(TARGET)_*.zip
+	mkdir -p ./release/$(TARGET)
+	cp -f $(TARGET).nro ./release/${TARGET}/${TARGET}.nro
+	unzip ./switchdata/data.zip -d./release/
+	cd ./release && zip -r ../$(TARGET)_$(VERSION_MAJOR).$(VERSION_MINOR)_switch.zip $(TARGET) && cd ../
+
+$(TARGET).nro: $(TARGET).elf
+	$(DEVKITPRO)/tools/bin/nacptool --create "$(TARGET)" "rsn8887" "$(VERSION_MAJOR).$(VERSION_MINOR)" $(TARGET).nacp
+	$(DEVKITPRO)/tools/bin/elf2nro $(TARGET).elf $(TARGET).nro --icon=./switchdata/icon0.jpg --nacp=$(TARGET).nacp
+
+$(TARGET).elf: $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ $(LIBS) -o $@
+
+clean:
+	@rm -rf $(TARGET).elf $(TARGET).vpk $(TARGET).nro $(TARGET).nacp release $(TARGET)_*_switch.zip $(OBJS)
+
+

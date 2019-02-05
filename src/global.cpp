@@ -107,6 +107,8 @@ const char * Joynames[30] = {"Left Stick Up", "Left Stick Down", "Left Stick Lef
 					   "Start Button", "Back Button", "Left Stick Click", "Right Stick Click", "Button 1", "Button 2", "Button 3", "Button 4", "Button 5", "Button 6"};
 #elif defined __vita__
 const char * Joynames[12] = {"SCE_CTRL_TRIANGLE", "SCE_CTRL_CIRCLE", "SCE_CTRL_CROSS", "SCE_CTRL_SQUARE", "SCE_CTRL_LTRIGGER", "SCE_CTRL_RTRIGGER", "SCE_CTRL_DOWN", "SCE_CTRL_LEFT", "SCE_CTRL_UP", "SCE_CTRL_RIGHT", "SCE_CTRL_SELECT", "SCE_CTRL_START"};
+#elif defined __SWITCH__
+const char * Joynames[12] = {"X", "A", "B", "Y", "L", "R", "Down", "Left", "Up", "Right", "Minus", "Plus"};
 #else
 const char * Joynames[30] = {"Joystick Up", "Joystick Down", "Joystick Left", "Joystick Right", "Stick 2 Up", "Stick 2 Down", "Stick 2 Left", "Stick 2 Right", "Pad Up", "Pad Down", 
                        "Pad Left", "Pad Right", "Button 1", "Button 2", "Button 3", "Button 4", "Button 5", "Button 6", "Button 7", "Button 8", 
@@ -129,7 +131,7 @@ short controlkeys[2][2][4][NUM_KEYS] = {
 												  {SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN},
 												  {SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN, SDLK_UNKNOWN} } },
 
-#elif defined  __vita__
+#elif defined(__vita__) || defined (__SWITCH__)
 											 { { {7, 9, 2, 6, 0, 3, 11, 1},
 												  {7, 9, 2, 6, 0, 3, 11, 1},
 												  {7, 9, 2, 6, 0, 3, 11, 1},
@@ -184,7 +186,7 @@ short controlkeys[2][2][4][NUM_KEYS] = {
 												  {JOY_HAT_UP, JOY_HAT_DOWN, JOY_HAT_LEFT, JOY_HAT_RIGHT, 12, 21, 14, 15},
 												  {JOY_HAT_UP, JOY_HAT_DOWN, JOY_HAT_LEFT, JOY_HAT_RIGHT, 12, 21, 14, 15},
 												  {JOY_HAT_UP, JOY_HAT_DOWN, JOY_HAT_LEFT, JOY_HAT_RIGHT, 12, 21, 14, 15} } } };
-#elif defined(__vita__)
+#elif defined(__vita__) || defined(__SWITCH__)
 												  //left, right, jump, down, turbo, powerup, start, cancel
 											  { { {7, 9, 2, 6, 0, 2, 11, 2},
 											  {7, 9, 2, 6, 0, 2, 11, 2},

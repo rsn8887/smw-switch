@@ -32,6 +32,10 @@
 #include <string.h>
 #include "SFont.h"
 
+#ifdef __SWITCH__
+#include "sdl2_to_sdl1.h"
+#endif
+
 static Uint32 GetPixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
 {
    Uint8  *bits;
@@ -96,7 +100,11 @@ SFont_Font* SFont_InitFont(SDL_Surface* Surface)
     
     pixel = GetPixel(Surface, 0, Surface->h-1);
     SDL_UnlockSurface(Surface);
+#ifdef USE_SDL2
+	SDL_SetColorKey(Surface, SDL_TRUE, pixel);
+#else
     SDL_SetColorKey(Surface, SDL_SRCCOLORKEY, pixel);
+#endif
 
     return Font;
 }

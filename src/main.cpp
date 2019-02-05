@@ -22,7 +22,7 @@
 | start:		24.01.2003									|
 | last changes:	12.02.2008									|
 |															|
-|								© 2003-2009 Florian Hufsky  |
+|								ï¿½ 2003-2009 Florian Hufsky  |
 |								  florian.hufsky@gmail.com	|
 |                                     mtschaffer@gmail.com  |
 |								  http://smw.72dpiarmy.com	|
@@ -760,6 +760,7 @@ WorldMap g_worldmap;
 std::vector<MapMusicOverride*> mapmusicoverrides;
 std::vector<WorldMusicOverride*> worldmusicoverrides;
 
+#ifdef __vita__
 // ImGui Code
 uint64_t tmr1;
 bool bilinear = true;
@@ -1017,6 +1018,7 @@ void ImGui_SetCallback() {
 	loadImGuiCfg();
 	
 }
+#endif
 
 //Network stuff
 int g_iNextNetworkID = 0;
@@ -1344,9 +1346,8 @@ int main(int argc, char *argv[])
 	scePowerSetBusClockFrequency(222);
 	scePowerSetGpuClockFrequency(222);
 	scePowerSetGpuXbarClockFrequency(166);
-#endif
-	
 	sceCtrlSetSamplingMode(SCE_CTRL_MODE_ANALOG_WIDE);
+#endif
 
 	printf("-------------------------------------------------------------------------------\n");
 	printf(" %s %s\n", TITLESTRING, VERSIONNUMBER);
@@ -1358,9 +1359,7 @@ int main(int argc, char *argv[])
 		printf("Can't init SDL %s",SDL_GetError());
 		exit(0);
 	}
-	
-	ImGui_SetCallback();
-	
+		
 	SDL_ShowCursor(SDL_DISABLE);
 
 	gfx_init(640, 480, false);		//initialize the graphics (SDL)
@@ -1433,7 +1432,7 @@ int main(int argc, char *argv[])
 	game_values.fullscreen			= false;
 #elif defined (_3DS)
 	game_values.fullscreen			= true;
-#elif defined (__vita__)
+#elif defined (__vita__) || defined (__SWITCH__)
 	game_values.fullscreen			= true;
 #else	
 	game_values.fullscreen			= false;
@@ -1640,7 +1639,11 @@ int main(int argc, char *argv[])
 	SetupDefaultGameModeSettings();
 	
 	//Read saved settings from disk
+#ifdef __SWITCH__
+	FILE * fp = OpenFile("/switch/SuperMarioWar/options.bin", "rb");
+#else
 	FILE * fp = OpenFile("ux0:data/smw/options.bin", "rb");
+#endif
 
 	if(fp)
 	{
@@ -1799,7 +1802,7 @@ int main(int argc, char *argv[])
 	gfx_setresolution(640, 480, false); //Sets flicker filter
 	SDL_SetHardwareFilter(game_values.hardwarefilter);
 	blitdest = screen;
-#elif defined __vita__
+#elif defined (__vita__) || defined (__SWITCH__)
 gfx_setresolution(640, 480, true);
 SDL_SetVideoModeScaling(0, 0, 960, 544);
 SDL_SetVideoModeBilinear(1);

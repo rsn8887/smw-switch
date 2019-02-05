@@ -24,6 +24,11 @@
 #include "path.h"
 //#include "wiiport.h"
 
+#ifdef __SWITCH__
+#include "sdl2_to_sdl1.h"
+#include <switch.h>
+#endif
+
 #ifdef LINUXFUNC
 	#include "linfunc.h"
 #endif
@@ -300,6 +305,10 @@ extern short			list_players_cnt;
 
 extern SDL_Joystick		**joysticks;
 extern short			joystickcount;
+
+#ifdef __SWITCH__
+extern int 				singleJoyconMode;
+#endif
 
 extern CScore			*score[4];
 extern short			respawn[4];

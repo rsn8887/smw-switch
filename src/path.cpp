@@ -97,6 +97,9 @@ const string convertPath(const string& source)
 #elif defined(__vita__)
     s = "ux0:/data/smw/" + source;
 	return s;
+#elif defined(__SWITCH__)
+    s = "/switch/SuperMarioWar/" + source;
+	return s;
 #else
     static bool are_paths_initialized = false;
 
